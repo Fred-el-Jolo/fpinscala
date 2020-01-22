@@ -111,7 +111,7 @@ object AnonymousFunctions {
 
 object MonomorphicBinarySearch {
 
-  // First, a binary search implementation, specialized to `Double`,
+  // First, a binary searclh implementation, specialized to `Double`,
   // another primitive type in Scala, representing 64-bit floating
   // point numbers
   // Ideally, we could generalize this to work for any `Array` type,
@@ -156,7 +156,23 @@ object PolymorphicFunctions {
 
   // Exercise 2: Implement a polymorphic function to check whether
   // an `Array[A]` is sorted
-  def isSorted[A](as: Array[A], gt: (A,A) => Boolean): Boolean = ???
+  // Given an array...
+  // Start from beginning +1 ...
+  // if n < n-1 then return false
+  // else if n >= array length then return true
+  // else Redo the check one array index further
+  def isSorted[A](as: Array[A], gt: (A,A) => Boolean): Boolean = {
+    @annotation.tailrec
+    def go(n: Int): Boolean = {
+      if (n >= as.length) true
+
+      val cur = as(n)
+      val prev = as (n-1)
+      if gt(prev, cur) false
+      else go(n+1)
+    }
+    go(1)
+  }
 
   // Polymorphic functions are often so constrained by their type
   // that they only have one implementation! Here's an example:
