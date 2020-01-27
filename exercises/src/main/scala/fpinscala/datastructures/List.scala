@@ -37,11 +37,8 @@ object List { // `List` companion object. Contains functions for creating and wo
       case Cons(h,t) => Cons(h, append(t, a2))
     }
 
-  def foldRight[A,B](as: List[A], z: B)(f: (A, B) => B): B = // Utility functions
-    as match {
-      case Nil => z
-      case Cons(x, xs) => f(x, foldRight(xs, z)(f))
-    }
+  def append2[A](a1: List[A], a2: List[A]): List[A] =
+    foldLeft(reverse(a1), a2) ( (acc, h) => Cons(h, acc) )
 
   def sum2(ns: List[Int]) =
     foldRight(ns, 0)((x,y) => x + y)
@@ -49,6 +46,8 @@ object List { // `List` companion object. Contains functions for creating and wo
   def product2(ns: List[Double]) =
     foldRight(ns, 1.0)(_ * _) // `_ * _` is more concise notation for `(x,y) => x * y`; see sidebar
 
+  def freds(ns: List[Int]) =
+    foldRight(ns, Nil:List[Int])(Cons(_,_))
 
   def tail[A](l: List[A]): List[A] = ???
 
@@ -60,9 +59,59 @@ object List { // `List` companion object. Contains functions for creating and wo
 
   def init[A](l: List[A]): List[A] = ???
 
-  def length[A](l: List[A]): Int = ???
+  def length[A](l: List[A]): Int =
+    foldRight(l, 0)((_, acc) => acc + 1)
 
-  def foldLeft[A,B](l: List[A], z: B)(f: (B, A) => B): B = ???
+  def foldRight[A,B](as: List[A], z: B)(f: (A, B) => B): B = // Utility functions
+    as match {
+      case Nil => z
+      case Cons(x, xs) => f(x, foldRight(xs, z)(f))
+    }
 
-  def map[A,B](l: List[A])(f: A => B): List[B] = ???
+  @annotation.tailrec
+  def foldLeft[A,B](l: List[A], z: B)(f: (B, A) => B): B = 
+    l match {
+      case Nil => z
+      case Cons(h,  t) => foldLeft(t, f(z,h))(f)
+    }
+
+  def foldRight2[A,B](l: List[A], z: B)(f: (A, B) => B): B = 
+    foldLeft(reverse(l), z) ((h, t) => f(t, h))
+    
+  def sum3(ns: List[Int]) =
+    foldLeft(ns, 0)((x,y) => x + y)
+
+  def product3(ns: List[Double]) =
+    foldLeft(ns, 1.0)(_ * _) // `_ * _` is more concise notation for `(x,y) => x * y`; see sidebar
+
+  def length3[A](l: List[A]): Int =
+    foldLeft(l, 0)((acc, _) => acc + 1)
+
+  def reverse[A](l: List[A]): List[A] =
+    foldLeft(l, List[A]())( (acc, h) => Cons(h,acc))
+
+  // 3.15
+  def concat[A](l: List[List[A]]): List[A] =
+    foldRight(l, List[A]()) ( append )
+
+  // 3.16
+  def add1(list: List[Int]): List[Int] = 
+    foldRight(list, List[Int]()) ( (head, tail) => Cons(head+1, tail))
+
+  // 3.17
+  def doubleToString(list: List[Double]): List[String] = 
+    //foldRight(list, List[String]()) ( (head, tail) => Cons('-' + head.toString + '-', tail) )
+    foldRight(list, Nil:List[String])((h,t) => Cons(h.toString,t))
+
+  // 3.18
+  def map[A,B](list: List[A])(func: A => B): List[B] = 
+    foldRight(list, Nil:List[B]) ( (h, t) => Cons(func(h), t) )
+
+  // 3.19
+  def filter[A](list: List[A])(func: A => Boolean): List[A] =
+    foldRight(list, Nil:List[A]) ( (h, t) => {
+      if (func(h)) Cons(h, t)
+      else t
+    })
+
 }
