@@ -1,1 +1,1 @@
-docker run -it -v /home/vagrant/dev/perso/fpinscala:/fpinscala joshdev/alpine-sbt /bin/bash
+docker run -it -v /home/jolo/dev/fpinscala:/fpinscala joshdev/alpine-sbt /bin/bash
