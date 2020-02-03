@@ -4,20 +4,44 @@ package fpinscala.errorhandling
 import scala.{Option => _, Some => _, Either => _, _} // hide std library `Option`, `Some` and `Either`, since we are writing our own in this chapter
 
 sealed trait Option[+A] {
-  def map[B](f: A => B): Option[B] = ???
 
-  def getOrElse[B>:A](default: => B): B = ???
+  // def yep = Option.freds(-1)
+  // def yep = Option.freds(3)
+  // freds.map(_*10)
 
-  def flatMap[B](f: A => Option[B]): Option[B] = ???
+  // 4.1.a
+  def map[B](f: A => B): Option[B] = this match {
+    case None => None
+    case Some(a) => Some(f(a))
+  }
 
-  def orElse[B>:A](ob: => Option[B]): Option[B] = ???
+  // 4.1.b
+  def getOrElse[B>:A](default: => B): B = this match {
+    case None => default
+    case Some(a) => a
+  }
 
+  // 4.1.c
+  def flatMap[B](f: A => Option[B]): Option[B] = {
+    map(f).getOrElse(None)
+  }
+
+  // 4.1.d
+  def orElse[B>:A](ob: => Option[B]): Option[B] = 
+    this map (Some(_)) getOrElse ob
+
+  // 4.1.e
   def filter(f: A => Boolean): Option[A] = ???
 }
 case class Some[+A](get: A) extends Option[A]
 case object None extends Option[Nothing]
 
 object Option {
+  def freds[Int](a: Int): Option[Int] = a match {
+    case -1 => None
+    case _ => Some(a)
+  }
+
   def failingFn(i: Int): Int = {
     val y: Int = throw new Exception("fail!") // `val y: Int = ...` declares `y` as having type `Int`, and sets it equal to the right hand side of the `=`.
     try {
