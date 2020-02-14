@@ -88,6 +88,10 @@ object Option {
     a.foldRight[Option[List[A]]](Some(Nil))((x,y) => map2(x,y)(_ :: _))
 
   // 4.5
-  def traverse[A, B](a: List[A])(f: A => Option[B]): Option[List[B]] = ???
+  def traverse[A, B](a: List[A])(f: A => Option[B]): Option[List[B]] = a match {
+    case Nil => Some(Nil)
+    case h :: t => map2(f(h), traverse(t)(f))(_ :: _)
+  }
+
 
 }
